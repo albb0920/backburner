@@ -58,7 +58,7 @@ module Backburner
       task.delete
       # Invoke after perform hook
       @hooks.invoke_hook_events(job_name, :after_perform, *args)
-    rescue => e
+    rescue Exception => e
       @hooks.invoke_hook_events(job_name, :on_failure, e, *args)
       raise e
     end

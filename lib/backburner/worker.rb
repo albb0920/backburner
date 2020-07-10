@@ -139,7 +139,7 @@ module Backburner
 
     rescue Backburner::Job::JobFormatInvalid => e
       self.log_error self.exception_message(e)
-    rescue => e # Error occurred processing job
+    rescue StandardError, NotImplementedError => e # Error occurred processing job
       self.log_error self.exception_message(e) unless e.is_a?(Backburner::Job::RetryJob)
 
       unless job
@@ -163,6 +163,9 @@ module Backburner
       end
 
       handle_error(e, job.name, job.args, job)
+    rescue Exception
+      job&.bury
+      raise
     end
 
 
